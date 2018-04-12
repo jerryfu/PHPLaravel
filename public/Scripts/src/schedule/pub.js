@@ -1,0 +1,401 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ajax_1 = require("../../comm/ajax");
+const comm_func_1 = require("../../comm/comm-func");
+const api_1 = require("../../comm/api");
+const defData_1 = require("../../comm/defData");
+const vwMaskLoading_1 = require("../../comm/vwMaskLoading");
+const dopack_1 = require("../../comm/dopack");
+const reducers_1 = require("../inc/reducers");
+const cbnReduce_1 = require("../inc/cbnReduce");
+require("babel-polyfill");
+const update = require("react-addons-update");
+exports.ac = {
+    empty: 'empty',
+    load: 'load',
+    page: 'page',
+    setpage: 'setpage',
+    chgFdlVal: 'chgFdlVal',
+    chgQryVal: 'chgQryVal',
+    submitOK: 'submitOK',
+    submitNot: 'submitNot',
+    submitDel: 'submitDel',
+    cancel: 'cancel',
+    modify: 'modify',
+    insert: 'insert',
+    return: 'return',
+    loadRecord: 'loadRecord',
+    addRecord: 'addRecord',
+    chgRecord: 'chgRecord',
+    addPlayerToSchedule: 'addPlayerToSchedule'
+};
+exports.setInputValue = (field) => {
+    return {
+        type: exports.ac.chgFdlVal,
+        field
+    };
+};
+exports.setQueryValue = (search) => {
+    return {
+        type: exports.ac.chgQryVal,
+        search
+    };
+};
+function callLoad(p) {
+    return __awaiter(this, void 0, void 0, function* () {
+        vwMaskLoading_1.mask_show(lang.mk_loading);
+        let pm = {};
+        let data1 = yield ajax_1.ft(api_1.default.GET__api_Schedule, pm);
+        let data2 = yield ajax_1.ft(api_1.default.POST__api_Schedule_PackOption, {});
+        vwMaskLoading_1.mask_off();
+        if (data1.state > 0)
+            alert(data1.message);
+        else
+            return {
+                type: exports.ac.load,
+                data: data1.data,
+                exist: data1.exist,
+                pack_option: data2
+            };
+    });
+}
+exports.callLoad = callLoad;
+function callPage(p) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let pm = dopack_1.doWKPA(p);
+        let data = yield ajax_1.ft(api_1.default.GET__api_Schedule, pm);
+        vwMaskLoading_1.mask_off();
+        if (data.state > 0) {
+            comm_func_1.tosMessage(null, data.message, 3);
+            return;
+        }
+        else
+            return {
+                type: exports.ac.load,
+                data: data.data,
+                exist: data.exist
+            };
+    });
+}
+exports.callPage = callPage;
+function callEdit(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        vwMaskLoading_1.mask_show(lang.mk_loading);
+        let tm = { id };
+        let pm = dopack_1.doWKPA(tm);
+        let data = yield ajax_1.ft(api_1.default.GET__api_Schedule_Item, pm);
+        vwMaskLoading_1.mask_off();
+        if (data.state > 0) {
+            alert(data.message);
+            return;
+        }
+        return {
+            type: exports.ac.modify,
+            data: data.data
+        };
+    });
+}
+exports.callEdit = callEdit;
+function callRemove(id, p) {
+    return __awaiter(this, void 0, void 0, function* () {
+        vwMaskLoading_1.mask_show(lang.mk_updating);
+        let tm = { id };
+        let pm = dopack_1.doWKPA(tm);
+        let data = yield ajax_1.ft(api_1.default.POST__api_Schedule_Remove, pm);
+        vwMaskLoading_1.mask_off();
+        if (data.state > 0) {
+            comm_func_1.tosMessage('', data.message, 3);
+        }
+        else {
+            comm_func_1.tosMessage('', lang.fi_delete, 1);
+            return {
+                type: exports.ac.submitDel
+            };
+        }
+    });
+}
+exports.callRemove = callRemove;
+function submitData(id, edit_type, data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let tm = { id, md: data };
+        let pm = dopack_1.doWKPA(tm);
+        if (edit_type == 2) {
+            let data = yield ajax_1.ft(api_1.default.POST__api_Schedule_Update, pm);
+            if (data.state == defData_1.err_code.HasErrList) {
+                let err_message = comm_func_1.packegeErrList(data.err_list);
+                comm_func_1.tosMessage('', err_message, 3);
+            }
+            else if (data.state > 0) {
+                alert(data.message);
+            }
+            else {
+                comm_func_1.tosMessage('', lang.fi_update, 1);
+                return dispatch => {
+                    dispatch({ type: exports.ac.submitOK, field: tm.md });
+                };
+            }
+        }
+        else if (edit_type == 1) {
+            let data = yield ajax_1.ft(api_1.default.POST__api_Schedule, pm);
+            if (data.state == defData_1.err_code.HasErrList) {
+                let err_message = comm_func_1.packegeErrList(data.err_list);
+                comm_func_1.tosMessage('', err_message, 3);
+            }
+            else if (data.state > 0) {
+                comm_func_1.tosMessage('', data.message, 3);
+                return { type: exports.ac.submitNot, field: tm.md };
+            }
+            else {
+                comm_func_1.tosMessage('更新資訊', lang.fi_insert, 1);
+                return dispatch => {
+                    dispatch(callEdit(data.id));
+                };
+            }
+        }
+    });
+}
+exports.submitData = submitData;
+exports.cancel = (field) => {
+    return {
+        type: exports.ac.cancel,
+        field
+    };
+};
+exports.returnGrid = () => {
+    return {
+        type: exports.ac.return
+    };
+};
+exports.addState = () => {
+    let r = {
+        type: exports.ac.insert,
+        data: {
+            schedule_id: 0,
+            play_name_id: 0
+        }
+    };
+    return r;
+};
+exports.setPage = (data) => {
+    let r = {
+        type: exports.ac.setpage,
+        data
+    };
+    return r;
+};
+function loadRecord(schedule_id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let pm = { schedule_id: schedule_id };
+        let data1 = yield ajax_1.ft(api_1.default.GET__api_Records_GetBySchedule, pm);
+        let r = {
+            type: exports.ac.loadRecord,
+            data: data1.data,
+        };
+        return r;
+    });
+}
+exports.loadRecord = loadRecord;
+exports.addRecord = (data) => {
+    let r = {
+        type: exports.ac.addRecord,
+        data
+    };
+    return r;
+};
+exports.setRecordValue = (field) => {
+    return {
+        type: exports.ac.chgRecord,
+        field
+    };
+};
+function saveRecord(records, field) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let pm = records;
+        let data1 = yield ajax_1.ft(api_1.default.POST__api_Records, pm);
+        if (data1.state == 0) {
+            let param = { id: records.schedule_id, md: field };
+            let data2 = yield ajax_1.ft(api_1.default.POST__api_Schedule_UpdateSet, param);
+            comm_func_1.tosMessage('比賽資訊更新', lang.fi_update, 1);
+        }
+        else {
+            comm_func_1.tosMessage('比賽資訊更新', data1.message, 3);
+        }
+        return {
+            type: 'submit'
+        };
+    });
+}
+exports.saveRecord = saveRecord;
+function addPlayerToSchedule(editRecordToogle, player_id, player_name, jersey_number, team_name) {
+    return {
+        type: exports.ac.addPlayerToSchedule,
+        editRecordToogle,
+        player_id,
+        player_name,
+        jersey_number,
+        team_name
+    };
+}
+exports.addPlayerToSchedule = addPlayerToSchedule;
+const page_grid = (state = { rows: [] }, action) => {
+    switch (action.type) {
+        case exports.ac.load:
+            return action.data;
+        case exports.ac.page:
+            return action.data;
+        case exports.ac.setpage:
+            return action.data;
+        default:
+            return state;
+    }
+};
+const search = (state = {
+        schedule_start_date: null,
+        schedule_end_date: null,
+        workYear: workYear
+    }, action) => {
+    switch (action.type) {
+        case exports.ac.chgQryVal:
+            return action.search;
+        default:
+            return state;
+    }
+};
+const edit_type = (state = 0, action) => {
+    switch (action.type) {
+        case exports.ac.insert:
+            return 1;
+        case exports.ac.modify:
+            return 2;
+        case exports.ac.submitOK:
+            return 2;
+        case exports.ac.return:
+            return 0;
+        default:
+            return state;
+    }
+};
+const view_mode = (state = 1, action) => {
+    switch (action.type) {
+        default:
+            return state;
+    }
+};
+const field = (state = {}, action) => {
+    switch (action.type) {
+        case exports.ac.insert:
+            return action.data;
+        case exports.ac.modify:
+            return action.data;
+        case exports.ac.chgFdlVal:
+            return action.field;
+        case exports.ac.submitOK:
+            return action.field;
+        case exports.ac.cancel:
+            return action.field;
+        case exports.ac.return:
+            return {};
+        default:
+            return state;
+    }
+};
+const kfield = (state = {}, action) => {
+    switch (action.type) {
+        case exports.ac.insert:
+            return action.data;
+        case exports.ac.modify:
+            return action.data;
+        case exports.ac.submitOK:
+            return action.field;
+        default:
+            return state;
+    }
+};
+const exist = (state = false, action) => {
+    switch (action.type) {
+        case exports.ac.load:
+            return action.exist;
+        case exports.ac.submitOK:
+            return true;
+        default:
+            return state;
+    }
+};
+const oper_id = (state = comm_func_1.guid(), action) => {
+    switch (action.type) {
+        case exports.ac.submitOK:
+            return comm_func_1.guid();
+        case exports.ac.submitDel:
+            return comm_func_1.guid();
+        case exports.ac.chgQryVal:
+            return comm_func_1.guid();
+        case exports.ac.return:
+            return comm_func_1.guid();
+        default:
+            return state;
+    }
+};
+const pack_option = (state = { option_team: [], option_play_name: [], option_site: [] }, action) => {
+    switch (action.type) {
+        case exports.ac.load:
+            if (action.pack_option) {
+                return action.pack_option;
+            }
+            else
+                return state;
+        default:
+            return state;
+    }
+};
+const records = (state = { field: {}, home: { data: [] }, visiting: { data: [] } }, action) => {
+    switch (action.type) {
+        case exports.ac.loadRecord:
+            if (action.data) {
+                return action.data;
+            }
+            else
+                return state;
+        case exports.ac.addRecord:
+            return action.data;
+        case exports.ac.chgRecord:
+            return action.field;
+        case exports.ac.addPlayerToSchedule:
+            return records_addPlayerToSchedule(state, action);
+        default:
+            return state;
+    }
+};
+function records_addPlayerToSchedule(state, action) {
+    let { editRecordToogle, player_id, player_name, jersey_number, team_name } = action;
+    let obj = { player_id, player_name, jersey_number, team_name };
+    let struct = {};
+    if (editRecordToogle == 'Home') {
+        struct = {
+            home: {
+                data: {
+                    $push: [obj]
+                }
+            }
+        };
+    }
+    else {
+        struct = {
+            visiting: {
+                data: {
+                    $push: [obj]
+                }
+            }
+        };
+    }
+    let n_state = update(state, struct);
+    return n_state;
+}
+exports.store = cbnReduce_1.default({ menudata: reducers_1.menudata, oper_id, search, page_grid, edit_type, view_mode, field, kfield, exist, pack_option, records });

@@ -1,0 +1,333 @@
+@charset "UTF-8";
+
+// 本頁專用變數(覆蓋)
+// ------------------------------------------------------------
+$isIndex:                true;
+$img-index:              '../images/index';
+
+$wrapper-b-spacing:      0;
+
+$header-bg:              false;
+$modal-top:              false;
+$modal-close-size:       60px;
+// $table-pd:               8px 20px;
+
+
+// import
+// ------------------------------------------------------------
+@import "_client/variables"; // 前台用變數(置頂)
+
+@import "core/function";
+@import "core/variables";
+@import "core/mixins";
+
+// 由此 output css
+@import "vendor/normalize";  // 重置樣式
+@import "vendor/print";      // 列印樣式
+
+@import "_client/base/basic";
+@import "_client/base/link";
+@import "_client/base/type";
+@import "_client/base/table";
+
+@import "_client/layout";
+@import "_client/modules/nav";
+@import "_client/modules/btn";
+// @import "_client/modules/btn-group";
+@import "_client/modules/modal";
+@import "_client/modules/tooltip";
+
+@import "_client/util"; // 建議置底
+
+
+// main
+// ------------------------------------------------------------
+
+// == banner
+#banner {
+    @extend .bg-black;
+    // height: 725px;
+}
+
+.swiper-slide {
+    img {
+        @include mq-max(break(wide, -1)) {
+            max-width: 100%;
+        }
+    }
+}
+
+// 分頁
+.swiper-pager {
+    position: absolute;
+    bottom: 6px !important;
+    text-align: right;
+    max-width: $max-width;
+    padding-right: 2%;
+    z-index: 2;
+}
+.swiper-pagination-bullet {
+    width: 13px !important;
+    height: 13px !important;
+    background: rgba(#fff,.4) !important;
+    opacity: .5 !important;
+
+    &-active { opacity: 1 !important; }
+}
+
+// == 球隊介紹
+$team-link-size: 180px;
+
+.team-link {
+
+    @extend .text-white, .font-xxl;
+
+    @include circle($team-link-size, center);
+
+    display: block;
+    background: $danger url(#{$img-index}/team-info_bg.png) center no-repeat;
+    z-index: z(header) - 1;
+
+    @include mq(mobile) {
+        margin-left: -($team-link-size/2);
+        top: -(($team-link-size/2) +2);
+
+        @include absolute(left 50%);
+    }
+
+    @include mq-max(break(tablet, -1)) {
+        @include transform(scale(0.8));
+    }
+    @include mq-max(break(mobile, -1)) {
+        margin: auto;
+        position: relative;
+    }
+
+    &:hover, &:active {
+        @extend .text-white;
+        @include diy-animate(jump, .4s infinite alternate) {
+            from {
+                @include transform(translateY(0));
+            }
+            to {
+                @include transform(translateY(-15px));
+            }
+        }
+    }
+}
+
+// == 賽事
+.play {
+    @extend .bg-muted;
+
+    position: relative;
+    background: lighten($muted, 7);
+
+    // 左邊底色
+    @include mq(desktop) {
+        @include el(before) {
+            background: color(muted);
+            height: 100%;
+            width: 50%;
+
+            @include absolute(left 50% top 0);
+        }
+    }
+}
+.play-game {
+    @extend .pt-24;
+
+    @include mq(mobile) {
+        padding-top: ($team-link-size/2);
+        padding-bottom: 32px;
+    }
+    @include mq(desktop) {
+        padding-right: 3%;
+        padding-top: 48px;
+    }
+    @include mq(tablet, break(desktop, -1)) {
+        padding-top: ($team-link-size/2)+48;
+    }
+}
+.play-live {
+    @extend .pt-48;
+
+    @include mq(desktop) {
+        padding-left: 3%;
+    }
+    @include mq-max(break(desktop, -1)) {
+        margin: 0 -16px;
+        padding-left: 16px;
+        padding-right: 16px;
+        background: color(muted);
+    }
+}
+
+// 賽事table的直播icon-目前沒用到
+// .icon-play {
+//     display: inline-block;
+//     width: 14px;
+//     height: 16px;
+//     background: url(#{$img-index}/icon-play2.png) 0 0 no-repeat;
+// }
+
+// 直播頁籤-目前沒用到
+// .live-nav {
+//     @extend  .text-left, .pt-4;
+//     @include clearfix;
+
+//     .btn {
+//         @extend .text-primary, .font-md;
+//         background-color: rgba(#fff, .4);
+//         border-radius: 0;
+
+//         &:hover, &:active, &.active {
+//             background-color: #fff;
+//         }
+//     }
+// }
+
+// 放影片的div
+.live {
+    border-top: 2px solid $danger;
+    position: relative;
+
+    @include mq(desktop) {
+        // 沒有頁籤時
+        margin-top: 52px;
+        min-height: 500px;
+    }
+    @include mq-max(break(desktop, -1)) {
+        margin-top: 32px;
+        min-height: 360px;
+    }
+
+    .none {
+        @include center;
+    }
+
+    header {
+        @extend .text-left;
+
+        @include absolute(left 12px top 6px);
+
+        span { display: inline-block; }
+    }
+}
+// 有影片的樣式
+.modal-open {
+    cursor: pointer;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    @include el(after) {
+        @include transition(.35s);
+        @include center(124px, 142px);
+        background: url(#{$img-index}/icon-play.png) 0 0 no-repeat;
+    }
+
+    &:hover, &:active {
+        &:after {
+            @include transform(translateX(7%));
+        }
+    }
+}
+.modal-content {
+    top: 50%;
+
+    @include transform(translateY(-50%));
+
+    iframe {
+        max-width: 100%;
+    }
+}
+
+// == 排行
+.ranking {
+    background-position: center 0;
+    background-repeat: no-repeat, repeat-x, repeat;
+    background-image: url(#{$img-index}/ranking_bg2.png),
+                      url(#{$img-index}/ranking_bg.gif),
+                      url(#{$img-index}/ranking_bg3.gif);
+
+    h1 {
+        @include rem('font-size', 80px);
+        color: #737D85;
+        letter-spacing: 5px;
+    }
+
+    @include mq(phone-plus, break(tablet, -1)) {
+        background-image: url(#{$img-index}/ranking_bg_mobile.png),
+                          url(#{$img-index}/ranking_bg.gif),
+                          url(#{$img-index}/ranking_bg3.gif);
+
+        padding-top: 250px;
+    }
+    @include mq-max(break(phone-plus, -1)) {
+        background: url(#{$img-index}/ranking_bg.gif) center 0 repeat-x,
+                    url(#{$img-index}/ranking_bg3.gif) center 0 repeat;
+    }
+}
+
+@include mq(tablet) {
+    .ranking-left {
+        float: left;
+    }
+    .ranking-right {
+        float: right;
+    }
+}
+@include mq-max(break(tablet, -1)) {
+    .ranking-left {
+        margin-bottom: 32px;
+    }
+}
+.ranking-left,
+.ranking-right {
+    @include mq(tablet) {
+        width: 42%;
+    }
+    @include mq(wide) {
+        width: 29%;
+    }
+}
+.item-team {
+    @extend .text-left;
+    width: 41%;
+    padding-left: 20px;
+}
+td.item-team {
+    border-right: 1px solid $muted;
+}
+// .tabs-nav {
+//     .btn {
+//         @extend .font-lg;
+//         width: 25%;
+//     }
+// }
+.tab-nav {
+    @extend .font-lg, .bg-white, .text-primary;
+
+    line-height: $btn-line-height;
+    padding: $btn-pd;
+
+    &:first-child {
+        border-radius: $btn-border-radius 0 0 $btn-border-radius;
+    }
+    &:last-child {
+        border-radius: 0 $btn-border-radius $btn-border-radius 0;
+    }
+    &:not(:first-child) { border-left: 1px solid hsla(0,0,0,0.1); }
+
+    &:hover, &:active, &.active {
+        @extend .text-white;
+        background: lighten($brand-primary,8);
+    }
+}
+
+// == 贊助商
+.sponsor {
+    padding-top: 75px;
+    padding-bottom: 110px;
+}

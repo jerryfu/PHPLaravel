@@ -1,0 +1,228 @@
+@charset "UTF-8";
+
+// == 主選單
+// ------------------------------------------------------------
+
+#menu {
+    z-index: z(menu);
+
+    // 本次專案
+    @include mq($mobile-menu-bk) {
+        float: right;
+        margin-top: 16px;
+
+        .mobile-show { display: none; }
+    }
+
+    // #{$nav-root} {
+    > a, span {
+        @include mq($mobile-menu-bk) {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+    > a {
+        position: relative;
+        letter-spacing: 2px;
+        color: #fff;
+
+        @include rem('font-size', 17px);
+
+        @include mq-max(break($mobile-menu-bk,-1)) {
+            display: block;
+            margin-bottom: 10px;
+            font-size: rem(20);
+        }
+
+        &:not(.fb-link) {
+            @include mq($mobile-menu-bk) {
+                padding-left: 8px;
+                padding-right: 8px;
+
+                @include el(after) {
+                    opacity: 0;
+                    top: 80%;
+
+                    @include arrow(down, $color: lighten($warning,10));
+                    @include center(x);
+                    @include transition(top .8s, opacity .5s);
+                }
+            }
+            &:hover, &:active, &.current {
+                @include mq($mobile-menu-bk) {
+                    &::after {
+                        opacity: 1;
+                        top: 115%;
+                    }
+                }
+                @include mq-max(break($mobile-menu-bk,-1)) {
+                    color: color(warning);
+                }
+            }
+        }
+    }
+
+    span {
+        @extend .font-md, .text-warning;
+
+        letter-spacing: 1px;
+
+        a {
+            @extend .hover-warning;
+
+            &:hover, &:active {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    // 子選單
+    @if $sub-nav-has {
+        @extend %list-unstyled;
+
+        li {
+            @include mq($mobile-menu-bk) {
+                display: inline-block;
+                vertical-align: top;
+            }
+            // 子選單顯示
+            &:hover, &:active {
+                .sub-nav {
+                    opacity: 1;
+                    visibility: visible;
+
+                    // 本次專案
+                    @include mq($mobile-menu-bk) {
+                        top: 100%;
+                    }
+                    @include mq-max(break($mobile-menu-bk,-1)) {
+                        height: auto;
+                    }
+                }
+            }
+        }
+        .sub-nav {
+            display: none;
+            opacity: 0;
+            visibility: hidden;
+
+            // 本次專案
+            @extend .bg-muted, .pt-32, .py-48;
+            @include transition(opacity .5s, top .35s);
+
+            @include mq($mobile-menu-bk) {
+                @include absolute(top 50px left 0 right 0);
+            }
+            @include mq-max(break($mobile-menu-bk,-1)) {
+                height: 0;
+                margin-left: 36px;
+            }
+
+            a {
+                line-height: 1.25;
+
+                display: block;
+                float: left;
+                width: 48%;
+                border-bottom: 1px solid darken($muted,5);
+
+                @extend .mb-4, .pb-4;
+                @include rem('font-size', 17px);
+
+                &:hover, &:active, &.current { text-decoration: underline; }
+            }
+        }
+    }
+
+    // 行動版面
+    @include mq-max(break($mobile-menu-bk,-1)) {
+        z-index: z(overlay);
+
+        @include fixed(bottom 0 top 3px left 0);
+        @if $mobile-menu-bg    { background: $mobile-menu-bg; }
+        @if $mobile-transition { @include transition($mobile-transition); }
+
+        overflow-y: auto;
+        width: $mobile-menu-width;
+        visibility: hidden;
+        opacity: 0;
+
+        // 本次專案
+        padding-top: $header-mobile-height + 12;
+
+        .js-mobile-body & {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}
+
+.fb-link {
+    // width: 34px;
+    // padding-bottom: 34px;
+    // background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinYMin meet' viewBox='0 0 262 266.895'><path id='path3087' fill='%23fff' d='M182.409,262.307v-99.803h33.499l5.016-38.895h-38.515V98.777c0-11.261,3.127-18.935,19.275-18.935 l20.596-0.009V45.045c-3.562-0.474-15.788-1.533-30.012-1.533c-29.695,0-50.025,18.126-50.025,51.413v28.684h-33.585v38.895h33.585 v99.803H182.409z'></path></svg>");
+    // background-size: 34px cover;
+    // background-color: #537BBC;
+
+    &:hover {
+        svg[aria-label="Facebook"] {
+            @extend .bg-warning;
+        }
+    }
+
+    @include mq($mobile-menu-bk) {
+        margin-left: 12px;
+    }
+
+    @include mq-max(break($mobile-menu-bk,-1)) {
+        margin: 24px auto 0 auto;
+    }
+
+    svg[role="img"] {
+        width: 34px;
+        height: 34px;
+        // border-radius: 5%;
+        fill: white;
+        // margin: 2rem;
+    }
+}
+svg[aria-label="Facebook"] { background: #537BBC; }
+
+@if $mobile-menu-has {
+
+    // body
+    .js-mobile-body {
+        overflow-y: hidden;
+    }
+
+    // == mobile-toggle
+    .mobile-toggle {
+        display: none;
+        background: none;
+        position: relative;
+        cursor: pointer;
+        z-index: z(overlay) + 1;
+
+        @include transition(.3s);
+
+        @include mq-max(break($mobile-menu-bk,-1)) {
+            display: block;
+        }
+
+        // 本次專案
+        @extend .pull-right, .px-16, .font-xl, .text-white;
+
+        border: none;
+        height: $header-mobile-height - 3;
+        top: 0; // for open-iconic
+        right: -16px;
+
+        &:focus { outline: 0; }
+
+        &:hover { opacity: .8; }
+        &:active, &.active {
+            @extend .bg-warning, .text-primary;
+        }
+    }
+}
+

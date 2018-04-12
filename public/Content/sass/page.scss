@@ -1,0 +1,914 @@
+@charset "UTF-8";
+
+// 本頁專用變數(覆蓋)
+// ------------------------------------------------------------
+$isPage:                 true;
+
+$headings-line-height:   1.2;
+$link-transition:        '.35s';
+
+$font-size-h1:           46px;
+$font-size-h2:           42px;
+$font-size-h3:           27px;
+
+// import
+// ------------------------------------------------------------
+@import "_client/variables"; // 前台用變數(置頂)
+
+@import "core/function";
+@import "core/variables";
+@import "core/mixins";
+
+// 由此 output css
+@import "vendor/normalize";  // 重置樣式
+@import "vendor/print";      // 列印樣式
+
+@import "_client/base/basic";
+@import "_client/base/link";
+@import "_client/base/type";
+@import "_client/base/table";
+@import "_client/base/form";
+
+@import "_client/layout";
+@import "_client/modules/nav";
+@import "_client/modules/btn";
+@import "_client/modules/btn-group";
+@import "_client/modules/label";
+@import "_client/modules/field";
+@import "_client/modules/figure";
+@import "_client/modules/loader";
+
+@import "_client/util"; // 建議放置在最後一個
+
+
+// main
+// ------------------------------------------------------------
+
+// 包進麵包屑樣式
+%breadcrumb-inside {
+    @include mq($mobile-menu-bk) {
+        padding-top: $header-height + 8;
+        margin-top: -($header-height);
+    }
+    @include mq-max(break($mobile-menu-bk,-1)) {
+        padding-top: $header-mobile-height + 8;
+        margin-top: -($header-mobile-height);
+    }
+}
+
+// == common
+
+// sidebar + content
+.sidebar {
+    @extend .mb-32;
+
+    @include mq(wide) {
+        float: right;
+
+        @include grid-gap(2, 7);
+
+        + .content {
+            float: left;
+
+            @include grid-gap(5, 7);
+        }
+    }
+}
+
+// breadcrumb
+.breadcrumb {
+    @extend %list-unstyled, .mb-12, .font-md, .text-primary;
+
+    line-height: 1.4;
+    letter-spacing: .5px;
+
+    li {
+        float: left;
+
+        &:not(:last-child) {
+            @extend .mr-8;
+
+            @include el(after, false, '/') {
+                @extend .ml-4;
+                color: $muted;
+            }
+        }
+    }
+}
+
+// 頁頭淺灰底包含麵包屑
+.head-inside {
+    background-color: lighten($muted, 7.6); // F7F8F8
+
+    @extend %breadcrumb-inside;
+}
+
+// tabs 子選單
+.tabs {
+    @extend .mt-48, .mb-24;
+
+    border-color: #E4D6A5;
+
+    @include mq(desktop) {
+        margin-bottom: 42px;
+    }
+    @include mq-max(tablet) {
+        overflow-y: hidden;
+        overflow-x: auto;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+        min-height: 0.01%;
+        white-space: nowrap;
+    }
+
+    a {
+        @extend .font-xl, .px-12;
+
+        display: inline-block;
+        border-bottom: 2px solid transparent;
+        position: relative;
+        bottom: -1px;
+
+        @include mq(phone) {
+            margin: 0 16px;
+            padding: 0 24px 18px 24px;
+        }
+
+        &:hover, &:active {
+            border-color: $brand-primary;
+        }
+        &.active {
+            border-color: $danger;
+        }
+    }
+}
+
+// card
+.card {
+    border: 1px solid lighten($muted, 4);
+}
+
+// 不換行
+.text-nowarp {
+    white-space: nowrap;
+}
+
+// 無圖時
+.none {
+    background-color: lighten($muted, 8);
+    border: 1px solid lighten($muted, 4);
+    color: $muted;
+    position: relative;
+
+    i {
+        @extend .font-xxl;
+        @include center;
+    }
+}
+
+
+// == 球隊
+// 球隊列表(list)
+.team-list {
+    h2 {
+        @include rem('font-size',58px);
+        letter-spacing: 4px;
+    }
+    // 組別
+    dl {
+        border-left: 4px solid;
+        &:nth-of-type(odd) { background-color: lighten($muted, 4); }
+        &:nth-of-type(even) { background-color: lighten($muted, 7); }
+    }
+    dt {
+        @extend .pr-0, .pt-16;
+
+        color: #496061;
+
+        @include mq(phone) {
+            line-height: 1.2;
+        }
+    }
+    dd {
+        @extend .text-left, .py-8;
+    }
+
+    a {
+        @extend .py-8;
+
+        line-height: 1.25;
+        display: block;
+
+        // @include clearfix;
+        @include rem('font-size', 17px);
+
+        @include mq(phone-plus) {
+            float: left;
+            width: 48%;
+            &:nth-of-type(odd) { margin-right: 2%; }
+            &:nth-last-child(n+2) {
+                border-bottom: 1px solid rgba(#000, .07);
+            }
+        }
+        @include mq-max(break(phone-plus, -1)) {
+            &:not(:last-child) {
+                border-bottom: 1px solid rgba(#000, .07);
+            }
+        }
+        @include mq-max(break(phone, -1)) {
+            padding-left: 12px;
+        }
+
+        &:hover, &:active {
+            color: rgba($brand-primary, .75);
+            @include transform(translateX(10px));
+        }
+    }
+
+    img {
+        @extend .mr-12;
+        max-width: 64px;
+        max-height: 64px;
+    }
+
+    &.north {
+        h2 { @extend .text-success; }
+        dl {
+            border-color: $success;
+            &:hover, &:active {
+                background-color: desaturate(lighten($success, 45), 20);
+            }
+        }
+    }
+    &.south {
+        h2 { @extend .text-secondary; }
+        dl {
+            border-color: $brand-secondary;
+            &:hover, &:active {
+                background-color: desaturate(lighten($brand-secondary, 35), 20);
+            }
+        }
+    }
+}
+
+
+// 球隊資料
+// 球隊名稱+logo
+.team-head {
+    @extend %breadcrumb-inside, .pb-24;
+
+    background: #f9f9f9 url(#{$img-path}/Team/headBg.gif) center 0 no-repeat;
+    min-height: 210px;
+
+    @include mq-max(break(desktop, -1)) {
+        background-size: cover 100%;
+    }
+
+    .team-logo, .none {
+        @include mq(phone) {
+            margin-right: 24px;
+        }
+        @include mq-max(break(phone, -1)) {
+            margin-right: 12px;
+        }
+    }
+
+    .team-logo {
+        max-width: 90px;
+        max-height: 95px;
+    }
+    .none {
+        width: 90px;
+        height: 95px;
+        background-color: $muted;
+        color: #fff;
+    }
+    h1 {
+        color: #000;
+        line-height: 1.2;
+
+        @include mq-max(break(phone, -1)) {
+            font-size: rem(32);
+        }
+    }
+    small {
+        color: lighten($brand-primary, 7);
+    }
+}
+// 球隊得分板
+.team-board {
+    @extend .text-white;
+    background-color: lighten($brand-primary, 6);
+
+    h6 { @extend .font-sm, .m-0; }
+
+    .grid {
+        @extend .py-4, .mb-0;
+
+        float: left;
+
+        &:not(:last-child) {
+            border-left: 1px solid rgba(#fff, .12);
+        }
+        &:nth-last-child(2) {
+            border-right: 1px solid rgba(#fff, .12);
+        }
+
+        @include mq(phone) {
+            height: 86px;
+        }
+    }
+    // 平均
+    .average {
+
+        @include mq(desktop) {
+            width: 28%;
+            padding-top: 12px;
+        }
+        @include mq-max(break(desktop, -1)) {
+            text-align: left;
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
+        h6 {
+            @extend .mb-8;
+
+            @include mq-max(break(desktop, -1)) {
+                display: inline;
+                margin-right: 8px;
+
+                &::after { content: ':'; }
+            }
+        }
+
+        li {
+            @include mq(phone, break(desktop, -1)) {
+                display: block;
+            }
+            @include mq(desktop) {
+                width: 33%;
+                margin-right: -4px;
+
+                @include rem('font-size',24);
+
+                &:not(:last-child) {
+                    border-right: 1px solid rgba(#fff, .06);
+                }
+            }
+        }
+    }
+    // 分組排名
+    .ranking {
+        @include mq(phone) {
+            padding: 12px 24px;
+        }
+
+        @include mq-max(break(phone, -1)) {
+            text-align: left;
+            width: 100%;
+            padding-left: 12px;
+            padding-right: 12px;
+
+            dt, dd { display: inline; }
+            dt {
+                margin-right: 8px;
+                &::after { content: ':'; }
+            }
+            dd { font-size: 1rem;}
+        }
+    }
+    // 例行賽
+    .scoring {
+        padding: 10px 16px;
+
+        h6 {
+            @extend .mr-12;
+
+            width: 20px;
+
+            @include mq(phone) {
+                @include prefix(writing-mode, vertical-lr);
+            }
+
+        }
+        strong {
+            @extend .font-xxl, .bg-white, .px-12, .text-primary;
+            display: block;
+        }
+        ul {
+            @extend .font-tiny;
+
+            background: url(#{$img-path}/icon-dot2.png) center 10px no-repeat;
+        }
+        li:first-child {
+            margin-right: 34px;
+        }
+    }
+    // 領隊,教練
+    .info {
+        @extend .text-left, .pt-12;
+
+        @include mq(phone) {
+            float: right;
+        }
+        @include mq-max(break(phone, -1)) {
+            padding-left: 18px;
+        }
+    }
+}
+
+// == Team/ Info 球隊資料
+// 球隊的球員排行
+.champion {
+    &:not(:empty) {
+        @extend .mb-48;
+    }
+
+    dl {
+        margin-bottom: 0;
+        width: 19.2%;
+        float: left;
+
+        &:not(:last-child) {
+            margin-right: 1%;
+        }
+    }
+    dt {
+        @extend .text-white, .font-xl;
+
+        font-weight: normal;
+        vertical-align: middle;
+
+        @include mq(desktop) {
+            width: 33%;
+        }
+        @include mq-max(break(desktop, -1)) {
+            display: block;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+    }
+    dd {
+        @extend .pt-12;
+        @include mq-max(break(desktop, -1)) {
+            display: block;
+        }
+    }
+    strong {
+        line-height: 1.01;
+
+        @include mq(desktop) {
+            font-weight: bold;
+            display: block;
+            @include rem('font-size', 50px);
+        }
+    }
+    header {
+        @extend .mb-8;
+
+        line-height: 1.3;
+        @include rem('font-size', 20px);
+
+        @include mq(phone-plus) {
+            @include rem('font-size', 34px);
+        }
+    }
+    h3 {
+        @extend .mt-8;
+        @include mq(phone-plus) {
+        }
+    }
+    span {
+        @extend .font-lg;
+        color: #837468;
+    }
+}
+
+// 球員列表
+// figure
+.player-list {
+    @extend .mb-32;
+
+    overflow: hidden;
+
+    @include transition(.5s);
+
+    @include mq(mobile) {
+        float: left;
+        width: 16%;
+        min-width: 156px;
+        min-height: 255px;
+    }
+
+    @include mq(mobile, break(desktop,-1)) {
+        margin-left: 1%;
+        margin-right: 1%;
+    }
+
+    @include mq(desktop) {
+        margin-bottom: 8px;
+
+        &:not(:nth-child(6n)) {
+            margin-right: 0.7%;
+        }
+    }
+
+    .none, .cut {
+        width: 100%;
+        height: 160px;
+    }
+    h6 {
+        @extend .mt-12, .mb-8;
+    }
+    p {
+        @extend .font-sm;
+        line-height: 1.3;
+        color: #666;
+    }
+
+    &:hover {
+        h6, p {
+            @extend .text-danger;
+        }
+    }
+}
+
+// Player 球員介紹資料
+.player-head {
+    position: relative;
+
+    // 三角裝飾圖
+    aside {
+        @include el(before) {
+            width: 0; height: 0;
+            border: 83px solid $muted;
+            border-right-color: transparent;
+            border-bottom-color: transparent;
+
+            @include absolute(left 0 top 0);
+        }
+    }
+
+    // 球隊logo
+    .team-logo {
+        @include absolute(left 14px top 14px);
+    }
+    img.team-logo {
+        max-width: 70px;
+        max-height: 58px;
+    }
+    .none {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+// 球員照片
+.player-img {
+    max-height: 442px;
+    min-height: 170px;
+}
+
+// 球員名字
+.player {
+    @extend .text-primary;
+
+    @include mq(desktop) {
+        margin-top: 45px;
+
+        @include rem('font-size', 90);
+    }
+
+    font-weight: bold;
+    letter-spacing: .2em;
+}
+
+// 球員資料
+.player-info {
+
+    @extend .mb-24;
+
+    dt, dd {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    // 背號
+    dt {
+        @extend .mr-8;
+
+        @include rem('font-size', 68);
+
+        @include mq(desktop) {
+            $size: 140px;
+
+            line-height: $size;
+            margin-right: 24px;
+
+            @include rem('font-size', $size);
+        }
+
+        color: #49606E; // 49606E
+        letter-spacing: .1em;
+    }
+
+    // 球隊資料
+    dd {
+        @extend .pl-8;
+
+        border-left: 1px solid $muted;
+
+        @include mq(desktop) {
+            padding-left: 30px;
+        }
+    }
+    //球隊名字
+    .name {
+        @extend .mt-16, .ml-2;
+        @include rem('font-size', 27);
+        letter-spacing: .1em;
+    }
+
+    // 位置
+    span {
+        @extend .font-lg;
+
+        @include prefix(writing-mode, vertical-lr);
+        width: 22px;
+    }
+    strong {
+        @extend .font-xxxl, .text-primary;
+    }
+}
+
+// 身高/體重
+.player-basic {
+    @extend .text-white, .font-lg;
+
+    $height: 42px;
+
+    @include mq(phone, break(tablet, -1)) {
+        margin-left: $height;
+    }
+    @include mq(tablet) {
+        margin-left: 8px;
+    }
+
+    strong {
+        @include mq-max(break(desktop, -1)) {
+            font-size: rem(26);
+        }
+    }
+
+    li {
+        @extend .px-24;
+
+        height: $height;
+        line-height: $height;
+
+        position: relative;
+
+        @include mq(phone) {
+            float: left;
+
+            @include el(all) {
+                @include absolute(top 0);
+
+                width: 0; height: 0;
+                border: ($height/2) solid transparent;
+            }
+            &::before {
+                border-bottom-color: inherit;
+                border-right-color: inherit;
+                left: -($height);
+            }
+
+            &::after {
+                border-top-color: inherit;
+                border-left-color: inherit;
+                right: -($height);
+            }
+        }
+
+        &:first-child {
+            @extend .bg-primary;
+            border-color: $brand-primary;
+        }
+        &:last-child {
+            background: #6D7F8C;
+            border-color: #6D7F8C;
+
+            @include mq(phone) {
+                margin-left: $height - 1;
+            }
+        }
+    }
+}
+
+// == 賽程
+// 結果
+.team-nav {
+    @include clearfix;
+
+    .tab-nav {
+        width: 49.5%;
+
+        &:first-child { float: left; }
+        &:last-child { float: right; }
+
+        &:not(.active) {
+            @extend .mb-4, .text-primary, .bg-muted;
+            border-radius: 2px;
+            // width: 48%;
+        }
+
+        &.active {
+            @extend .py-8;
+            // width: 51.5%;
+            border-radius: 2px 2px 0 0;
+        }
+    }
+}
+
+.result-info {
+    @include clearfix;
+    margin-bottom: 0;
+
+    text-align: left;
+
+    @include mq(tablet) {
+        // 反向
+        [dir='rtl'] & {
+            text-align: right;
+            padding: 0;
+        }
+    }
+
+    li {
+        display: inline-block;
+        vertical-align: middle;
+        float: left;
+
+        @include mq(tablet) {
+            // 反向
+            [dir='rtl'] & {
+                float: right;
+            }
+        }
+
+        &:nth-child(2) {
+            margin-top: 8px;
+        }
+        &:nth-child(3) {
+            clear: both;
+        }
+    }
+}
+
+
+
+// == all table
+// 排序
+.sortable {
+    th:not(.sorttable_nosort) {
+        cursor: pointer;
+
+        @include transition(.35s);
+
+        &:hover {
+            @extend .text-warning;
+        }
+    }
+}
+
+// 場次
+.item-showing {
+    width: 60px;
+}
+// 排名
+.item-ranking {
+    width: 45px;
+}
+// 文字靠左球隊
+.item-team {
+    @extend .text-left;
+    min-width: 125px;
+}
+// 得分
+.item-total {
+    background-color: lighten($warning, 10);
+}
+
+
+// == news
+
+//figure
+.news-list {
+    @extend .mb-12;
+
+    @include transition(.3s ease-in);
+
+    @include mq(tablet) {
+        width: (100% / 3);
+        min-height: 386px;
+        float: left;
+
+        &:not(:nth-child(3n)) {
+            figcaption {
+                border-right: 1px solid lighten($muted, 5);
+            }
+        }
+    }
+    figcaption {
+        @extend .p-8;
+    }
+
+    .cut {
+        width: 98%;
+        height: 220px;
+        margin: 1% auto;
+        background-color: lighten($muted, 5);
+    }
+    h4 {
+        @extend .mt-0;
+
+        @include transition(.5s ease);
+        @include text-overflow;
+    }
+    .date {
+        color: darken($muted, 10);
+    }
+    .more {
+        @extend .hover-danger;
+        @include transition(.7s);
+
+        position: relative;
+        z-index: z(figure)+1;
+    }
+
+    &:hover {
+        box-shadow: 0 0 20px rgba(#000, .2);
+
+        h4 {
+            color: $danger;
+        }
+
+        img {
+            // z-index: -1;
+            // @include prefix(filter, saturate(2) blur(3px));
+            @include transform(translate(-50%, -50%), scale(1.2));
+        }
+    }
+}
+
+.title-underline {
+    @extend .pb-8, .text-danger;
+    border-bottom: 1px solid #E4D6A5;
+}
+
+// 活動花絮
+.video {
+    iframe {
+        max-width: 100%;
+
+        @include mq-max(mobile) {
+            height: auto;
+        }
+    }
+}
+
+// Links
+
+.link {
+    border: 1px solid $muted;
+    width: 14.2%;
+    height: 70px;
+    margin: 18px 1%;
+
+    @include mixin-dryer('align-middle') {
+        display: inline-block;
+        vertical-align: middle;
+    }
+    @include middle('.company', 70px);
+
+    img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+}
+
+
+// == editor
+.editor {
+    @extend .mt-32;
+    word-wrap: normal;
+    word-break: break-all;
+
+    img {
+        max-width: 100% !important;
+    }
+
+    ol, ul {
+        @extend .ml-24;
+    }
+}

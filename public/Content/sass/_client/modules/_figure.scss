@@ -1,0 +1,33 @@
+@charset "UTF-8";
+
+figcaption {
+//     @include prefix(backface-visibility, hidden);
+//     &::before, &::after { pointer-events: none; }
+}
+
+figure {
+    position: relative;
+    cursor: pointer;
+    margin: 0;
+
+    > a {
+        z-index: z(figure);
+        opacity: 0;
+        background: #fff; // for IE10 bugfix
+        top: 0;
+
+        @include size(100%);
+        @include absolute(left 0 top 0);
+    }
+
+    // 本次專案
+    .cut {
+        position: relative;
+        overflow: hidden;
+    }
+    img {
+        @include transition(.5s ease-in-out);
+        @include center;
+        max-width: 100%;
+    }
+}

@@ -1,0 +1,215 @@
+@charset "UTF-8";
+
+/*      layout
+-----------------------------------------------------------------------*/
+// 置中(有最大寬度限制,非滿版才需要)
+.wrap {
+    @include clearfix;
+
+    margin: 0 auto;
+    max-width: $max-width;
+
+    @include mq(desktop, $max-width) {
+        max-width: $min-width;
+    }
+
+    @if $enable-RWD {
+        @include mq-max(break($min-width, -1)) {
+            @include rem('padding-left', 16px);
+            @include rem('padding-right', 16px);
+        }
+    } @else {
+        min-width: $min-width;
+    }
+}
+
+#wrapper {
+    @if $wrapper-bg     { background: $wrapper-bg; }
+    @if not $enable-RWD { min-width: $min-width; }
+    @if $lte7 { _height: 100%; }
+    min-height: 100%;
+    padding-bottom: $wrapper-b-spacing; // 內容與footer間距
+
+    @include mq(phone-plus) {
+        padding-bottom: $footer-height + $wrapper-b-spacing; // 內容與footer間距
+    }
+
+    // 本次專案
+    @if $isPage {
+        @include mq($mobile-menu-bk) {
+            padding-top: $header-height + 8;
+        }
+
+        @include mq-max(break($mobile-menu-bk,-1)) {
+            padding-top: $header-mobile-height + 8;
+        }
+    }
+
+    .scrolled & {
+        @include mq-max(break($mobile-menu-bk,-1)) {
+            padding-top: $header-mobile-height + 8;
+        }
+    }
+}
+
+// header
+// ----------------------------------------------------------------------
+#header {
+    @if $header-bg     { background: $header-bg; }
+    @if $header-height { height: $header-height; }
+    z-index: z(header);
+
+    // 本次專案
+    color: #fff;
+    border-top: 3px solid $warning;
+
+    @include fixed(top 0 right 0 left 0);
+    @include transition(height .35s);
+
+    @include mq-max(break($mobile-menu-bk,-1)) {
+        height: $header-mobile-height;
+    }
+
+    @if $isIndex {
+        background: url(#{$img-index}/headerBg.png) 0 bottom repeat-x;
+    }
+
+    .scrolled & {
+        @if $isIndex {
+            background: rgba(#000, .9);
+        }
+        @if $isPage {
+            background: rgba($header-bg, .9);
+
+            &:hover {
+                background: $header-bg;
+            }
+        }
+    }
+}
+
+.logo {
+    cursor: pointer; cursor: hand; // for ie
+    z-index: z(logo);
+
+    // @include text-pic(logo-img, 寬, 高);
+
+    // 本次專案
+    float: left;
+    background: url(#{$img-path}/logo.gif) 0 center no-repeat;
+
+    @include rem('font-size',20px);
+
+    @include mq($mobile-menu-bk) {
+        padding: 15px 0 15px 60px;
+
+        @if $isIndex {
+            margin-top: 6px;
+        }
+        @if $isPage {
+            margin-top: 3px;
+        }
+    }
+
+    @include mq-max(break($mobile-menu-bk,-1)) {
+        $mg-y: 4px;
+
+        background-size: contain;
+        line-height: ($header-mobile-height - ($mg-y*2) - 3);
+        height: ($header-mobile-height - ($mg-y*2) - 3);
+        padding-left: 60px;
+        margin: $mg-y 0;
+    }
+    @include mq-max(420px) {
+        @include text-hide;
+    }
+}
+
+
+// footer 頁腳
+// ----------------------------------------------------------------------
+#footer {
+    @if $footer-bg { background: $footer-bg; }
+    @if $footer-color { color: $footer-color; }
+    z-index: z(footer);
+
+    // 本次專案
+    @extend .text-left, .font-md;
+
+    position: relative;
+    padding-top: 30px;
+    padding-bottom: 60px;
+
+    @include mq(phone-plus) {
+        min-height: $footer-height;
+        margin-top: -($footer-height);
+        background: $brand-primary url(#{$img-path}/footBg.gif) 0 bottom repeat-x;
+    }
+    @include mq(desktop) {
+        padding-top: 45px;
+        padding-bottom: 90px;
+        background: url(#{$img-path}/footBg.png) center bottom no-repeat, $brand-primary url(#{$img-path}/footBg.gif) 0 bottom repeat-x;
+    }
+
+    a {
+        color: lighten($warning,20);
+
+        &:hover, &:active, &.current {
+            color: $warning;
+        }
+    }
+}
+
+.foot-units {
+    @include mq(desktop) {
+        margin-bottom: 0;
+    }
+    @include mq(phone-plus, break(desktop, -1)) {
+        margin-bottom: 32px;
+    }
+    @include mq-max(break(phone-plus, -1)) {
+        display: none;
+    }
+
+    // dt {
+    //     @extend .text-warning;
+
+    //     font-weight: normal;
+
+    //     @include rem('font-size',19px);
+    // }
+    // dd {
+    //     @include mq(desktop) {
+    //         &:not(:last-of-type) {
+    //             margin-bottom: 32px;
+    //         }
+    //     }
+    //     @include mq-max(break(desktop, -1)) {
+    //         margin-bottom: 12px;
+    //     }
+    // }
+}
+
+.foot-nav {
+    @include mq(desktop) {
+        @include absolute(left 50% top 110px);
+        margin-left: 287px;
+    }
+    a {
+        @extend .mr-16, .mb-24;
+        display: inline-block;
+    }
+}
+
+.copyright {
+    @extend .font-tiny, .mt-16;
+
+    @include mq(desktop) {
+        color: #B3B3B3;
+    }
+
+    @include mq-max(break(desktop, -1)) {
+        color: #fff;
+        @include absolute(left 16px bottom 4px);
+    }
+}
