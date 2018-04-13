@@ -14,6 +14,7 @@ yarn-error.log
 
 
 # 自定忽略
+/public/Scripts/build/app/*.js
 /public/Scripts/src/*.js
 /public/Scripts/src/**/*.js
 /public/Scripts/comm/*.js
