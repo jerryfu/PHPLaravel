@@ -1,0 +1,19 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": false,
+    "target": "es2015",
+    "jsx": "react"
+  },
+  "exclude": [
+    "node_modules",
+    "wwwroot",
+    "Scripts/build",
+    "Scripts/build.2017",
+    "Scripts/cdn"
+  ]
+}

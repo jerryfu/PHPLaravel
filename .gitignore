@@ -14,8 +14,8 @@ yarn-error.log
 
 
 # 自定忽略
-**/Scripts/src/*.js
-**/Scripts/src/**/*.js
-**/Scripts/comm/*.js
-**/Scripts/**/*.map
+/public/Scripts/src/*.js
+/public/Scripts/src/**/*.js
+/public/Scripts/comm/*.js
+/public/Scripts/**/*.map
 
