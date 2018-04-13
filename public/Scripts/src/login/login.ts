@@ -16,8 +16,9 @@ declare var ValidateCode: string;
 function ReSetVcImg() {
     $("#validate_img").attr("src", gb_approot + "Ah/VC.ashx?vn=" + ValidateCode + "&t" + (new Date()).getTime());
 }
-
+alert(5);
 $(document).ready(function () {
+
     $("#frm").submit(function (event) {
         event.preventDefault();
         var data: LoginData = {
