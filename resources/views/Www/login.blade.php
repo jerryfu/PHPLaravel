@@ -7,8 +7,7 @@
         </h1>
         <h6 class="sub-copyright">TAOYUAN SUPER BASKETBALL ALLIANCE &copy; 2017</h6>
 
-        <form id="frm" class="text-left" autocomplete="off">
-
+        <form id="frm" class="text-left" autocomplete="off" method="post">
             <header class="title font-sp">System Login</header>
 
             <main class="clearfix">

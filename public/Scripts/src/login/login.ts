@@ -1,4 +1,4 @@
-﻿import { mask_show, mask_off } from '../../comm/vwMaskLoading';
+﻿import {mask_show, mask_off} from '../../comm/vwMaskLoading';
 
 interface LoginData {
     account?: string;
@@ -6,17 +6,20 @@ interface LoginData {
     validate?: string;
     lang?: string;
 }
+
 interface LoginResult {
     result: boolean;
     message: string;
     url: string;
     state: number;
 }
+
 declare var ValidateCode: string;
+
 function ReSetVcImg() {
     $("#validate_img").attr("src", gb_approot + "Ah/VC.ashx?vn=" + ValidateCode + "&t" + (new Date()).getTime());
 }
-alert(5);
+
 $(document).ready(function () {
 
     $("#frm").submit(function (event) {
@@ -32,8 +35,11 @@ $(document).ready(function () {
         $.ajax({
             type: "POST",
             url: gb_approot + '_SysAdm/loginCheck',
-            data: data,
-            dataType: 'json'
+            data: {},
+            dataType: 'json',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+            },
         }).done(function (data: LoginResult, textStatus, jqXHRdata) {
 
             if (data.state == 0) {
@@ -67,7 +73,7 @@ $(document).ready(function () {
                 mask_off();
             }
         }).fail(function (jqXHR, textStatus, errorThrown) {
-            grecaptcha.reset(widgetId);
+            //grecaptcha.reset(widgetId);
             mask_off();
             alert(errorThrown);
         });

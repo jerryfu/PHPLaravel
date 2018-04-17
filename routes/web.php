@@ -15,4 +15,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('_SysAdm', 'Www\LoginController@index');
+
+Route::group(['middleware' => [], 'prefix' => '_SysAdm', 'namespace' => 'Www'], function () {
+    Route::get('', 'LoginController@index');
+    Route::post('loginCheck', 'LoginController@login_check');
+});
+
+
+Route::group(['prefix' => 'todo'], function () {
+    Route::get('index', 'ToDoController@index')->name('todo.index');
+    Route::get('say', 'ToDoController@say')->name('todo.say');
+});
+

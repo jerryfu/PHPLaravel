@@ -1,9 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const $ = require("jquery");
-const toastr = require("toastr");
-const Moment = require("moment");
+var $ = require("jquery");
+var toastr = require("toastr");
+var Moment = require("moment");
 function guid() {
+    /**
+     * 產生GUID
+     */
     function s4() {
         return Math.floor((1 + Math.random()) * 0x10000)
             .toString(16)
@@ -14,6 +17,11 @@ function guid() {
 }
 exports.guid = guid;
 function obj_prop_list(obj) {
+    /*
+    Autohr:Jerry
+    Date:2014/2/23
+    Description:列出物件屬性
+    */
     for (var prop in obj) {
         if (obj.hasOwnProperty(prop)) {
             console.log(prop + " :" + obj[prop]);
@@ -46,6 +54,10 @@ function isValidJSONDate(value, userFormat) {
     return isDate(theDate, theFormat);
 }
 exports.isValidJSONDate = isValidJSONDate;
+/**
+ * 標準時間格式
+ * @param utcstr
+ */
 function stdTime(utcstr) {
     if (utcstr && isValidJSONDate(utcstr, null)) {
         return Moment(utcstr).format("HH:mm");
@@ -54,6 +66,10 @@ function stdTime(utcstr) {
         return null;
 }
 exports.stdTime = stdTime;
+/**
+ * 系統標準日期
+ * @param utcstr UTC日期格
+ */
 function stdDate(utcstr) {
     if (utcstr && isValidJSONDate(utcstr, null)) {
         return Moment(utcstr).format("YYYY-MM-DD");
@@ -62,6 +78,11 @@ function stdDate(utcstr) {
         return null;
 }
 exports.stdDate = stdDate;
+/**
+ * 加千分位數字及小數點位數
+ * @param num 數字來源
+ * @param float_num 小數點顯示位數
+ */
 function stdNumber(num, float_num) {
     if (num == undefined || num == null)
         return '';
@@ -69,6 +90,7 @@ function stdNumber(num, float_num) {
 }
 exports.stdNumber = stdNumber;
 function stdNumberFloat(num, float_num) {
+    // 1 => 1.00 2.3=>2.30
     if (num == undefined || num == null)
         return '';
     var n = floatSpot(num, float_num);
@@ -77,11 +99,16 @@ function stdNumberFloat(num, float_num) {
 }
 exports.stdNumberFloat = stdNumberFloat;
 function fmtMoney(n, g) {
+    /*
+    Autohr:Ajoe
+    Date:2015/12/09
+    Description:金錢格式
+    */
     if (n == undefined || n == null)
         return '';
-    let glue = (typeof g == 'string' && g != null && g != undefined) ? g : ',';
-    let digits = n.toString().split('.');
-    let pattern = /(-?\d+)(\d{3})/;
+    var glue = (typeof g == 'string' && g != null && g != undefined) ? g : ','; // 決定三個位數的分隔符號
+    var digits = n.toString().split('.'); // 先分左邊及小數點後
+    var pattern = /(-?\d+)(\d{3})/;
     while (pattern.test(digits[0])) {
         digits[0] = digits[0].replace(pattern, "$1" + glue + "$2");
     }
@@ -89,7 +116,7 @@ function fmtMoney(n, g) {
 }
 exports.fmtMoney = fmtMoney;
 function getOptByVal(options, value) {
-    var items = options.filter(x => x.value === value);
+    var items = options.filter(function (x) { return x.value === value; });
     if (items.length > 0)
         return items[0];
     else
@@ -116,6 +143,7 @@ function tim() {
     return d.toUTCString() + '.' + d.getMilliseconds().toString();
 }
 exports.tim = tim;
+//補字元
 function pad(str, len, pad, dir) {
     var padlen;
     if (typeof (len) == "undefined") {
@@ -147,13 +175,13 @@ function pad(str, len, pad, dir) {
 exports.pad = pad;
 function tosMessage(title, message, type) {
     toastr.options.closeButton = true;
-    if (type == 0)
+    if (type == ToastrType.info)
         toastr.info(message, title);
-    if (type == 1)
+    if (type == ToastrType.success)
         toastr.success(message, title);
-    if (type == 3)
+    if (type == ToastrType.error)
         toastr.error(message, title);
-    if (type == 2)
+    if (type == ToastrType.warning)
         toastr.warning(message, title);
 }
 exports.tosMessage = tosMessage;
@@ -185,11 +213,17 @@ function clone(obj) {
     return copy;
 }
 exports.clone = clone;
+/**
+ * 浮點數取小數點位數
+ * @param num 數字來源
+ * @param pos 小數點顯示位數
+ */
 function floatSpot(num, pos) {
-    let size = Math.pow(10, pos);
+    var size = Math.pow(10, pos);
     return Math.round(num * size) / size;
 }
 exports.floatSpot = floatSpot;
+//除數加浮點數取小數點位數 格式化
 function divisor(num, div_num, pos) {
     if (num !== null && num != undefined) {
         if (pos != null)
@@ -202,6 +236,7 @@ function divisor(num, div_num, pos) {
 }
 exports.divisor = divisor;
 function ifrmDown(download_src) {
+    //background download excel file
     $('#file_down').remove();
     var item = $(this).attr('item');
     var src = src;
@@ -212,7 +247,8 @@ function ifrmDown(download_src) {
 }
 exports.ifrmDown = ifrmDown;
 function isNumeric(n) {
-    let m = parseFloat(n);
+    var m = parseFloat(n);
+    //return !isNaN(parseFloat(n)) && isFinite(n) && m >= 0; //正能正整數
     return !isNaN(parseFloat(n)) && isFinite(n);
 }
 exports.isNumeric = isNumeric;
@@ -238,19 +274,31 @@ function getBrower() {
         return ('Safari: ' + Sys.safari);
 }
 function checkTwID(id) {
+    /*
+      Autohr:Ajoe
+      Date:2015/9/8
+      Description:台灣身份證檢查簡
+    */
     if (id != null && id != "") {
+        //建立字母分數陣列(A~Z)
         var city = new Array(1, 10, 19, 28, 37, 46, 55, 64, 39, 73, 82, 2, 11, 20, 48, 29, 38, 47, 56, 65, 74, 83, 21, 3, 12, 30);
         id = id.toUpperCase();
+        // 使用「正規表達式」檢驗格式
         if (id.search(/^[A-Z](1|2)\d{8}$/i) == -1) {
+            //alert('基本格式錯誤');
             return false;
         }
         else {
+            //將字串分割為陣列(IE必需這麼做才不會出錯)
             id = id.split('');
+            //計算總分
             var total = city[id[0].charCodeAt(0) - 65];
             for (var i = 1; i <= 8; i++) {
                 total += eval(id[i]) * (9 - i);
             }
+            //補上檢查碼(最後一碼)
             total += eval(id[9]);
+            //檢查比對碼(餘數應為0);
             return ((total % 10 == 0));
         }
     }
@@ -259,10 +307,16 @@ function checkTwID(id) {
     }
 }
 function DiffDate(start, end) {
+    /*
+      Autohr:Ajoe
+      Date:2015/9/24
+      Description:計算兩日期相差天數
+    */
     if (start != null && end != null) {
         var day_s = new Date(start);
         var day_e = new Date(end);
         if (day_s <= day_e) {
+            //開始日期 小於等於 結束日期 才計算
             var iDays = (Math.abs(day_e.getTime() - day_s.getTime()) / 1000 / 60 / 60 / 24) + 1;
             return { result: 1, diff_day: iDays };
         }
@@ -275,6 +329,7 @@ function DiffDate(start, end) {
     }
 }
 function MntV(date) {
+    //將日期設定成moment物件
     var r = date === null || date === undefined ? null : Moment(date);
     return r;
 }
@@ -294,6 +349,7 @@ function formatNumber(number) {
     return x1;
 }
 exports.formatNumber = formatNumber;
+//查詢QueryString
 function queryString(name, url) {
     if (!url)
         url = window.location.href;
@@ -307,8 +363,8 @@ function queryString(name, url) {
 }
 exports.queryString = queryString;
 function makeInputValue(e) {
-    let input = e.target;
-    let value;
+    var input = e.target;
+    var value;
     if (input.value == 'true') {
         value = true;
     }
@@ -322,32 +378,51 @@ function makeInputValue(e) {
 }
 exports.makeInputValue = makeInputValue;
 function getTwDate(d) {
+    //顯示台灣日期
     if (d == null || d == undefined) {
         return "";
     }
-    let date = new Date(d);
-    let mm = Moment(d);
-    let year = mm.year(), month = mm.month() + 1, day = mm.date(), hour = mm.hours(), minute = mm.minutes(), second = mm.seconds(), hourFormatted = hour % 12 || 12, minuteFormatted = minute < 10 ? "0" + minute : minute, morning = hour < 12 ? "am" : "pm", result = `${year - 1911}年${month}月${day}日 `;
+    var date = new Date(d);
+    var mm = Moment(d); //改用moment套件
+    var year = mm.year(), //date.getFullYear(),
+    month = mm.month() + 1, //date.getMonth() + 1, // months are zero indexed
+    day = mm.date(), //date.getDate(),
+    hour = mm.hours(), //date.getHours(),
+    minute = mm.minutes(), //date.getMinutes(),
+    second = mm.seconds(), //date.getSeconds(),
+    hourFormatted = hour % 12 || 12, // hour returned in 24 hour format
+    minuteFormatted = minute < 10 ? "0" + minute : minute, morning = hour < 12 ? "am" : "pm", result = year - 1911 + "\u5E74" + month + "\u6708" + day + "\u65E5 ";
     return result;
 }
 exports.getTwDate = getTwDate;
-exports.packegeErrList = (err_list) => {
-    let ls = [];
+exports.packegeErrList = function (err_list) {
+    var ls = [];
+    //console.log('check err list', err_list);
     if (err_list && err_list.length > 0) {
-        err_list.forEach((item, i) => {
-            item.err.forEach((list, j) => {
+        err_list.forEach(function (item, i) {
+            item.err.forEach(function (list, j) {
                 ls.push(item.field + ':' + list.message);
             });
         });
     }
     return ls.join('<br />');
 };
-exports.showErrList = (title, err_list) => {
-    let err_msgs = exports.packegeErrList(err_list);
-    tosMessage(title, err_msgs, 3);
+//錯誤訊息包裝處
+exports.showErrList = function (title, err_list) {
+    var err_msgs = exports.packegeErrList(err_list);
+    tosMessage(title, err_msgs, ToastrType.error);
 };
-function mkTpl(strings, ...keys) {
-    return (function (...values) {
+//製作樣版函式
+function mkTpl(strings) {
+    var keys = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        keys[_i - 1] = arguments[_i];
+    }
+    return (function () {
+        var values = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            values[_i] = arguments[_i];
+        }
         var dict = values[values.length - 1] || {};
         var result = [strings[0]];
         keys.forEach(function (key, i) {
@@ -365,6 +440,7 @@ function isOK(src) {
         return true;
 }
 exports.isOK = isOK;
+//字串是否全中文
 function testZH(src) {
     for (var i = 0; i < src.length; i++) {
         if (src.charCodeAt(i) < 0x4E00 || src.charCodeAt(i) > 0x9FA5) {
@@ -374,6 +450,11 @@ function testZH(src) {
     return true;
 }
 exports.testZH = testZH;
+/**
+ * 浮點數相加
+ * @param arg1
+ * @param arg2
+ */
 function foAdd(arg1, arg2) {
     var r1, r2, m;
     try {
@@ -392,6 +473,11 @@ function foAdd(arg1, arg2) {
     return (foMul(arg1, m) + foMul(arg2, m)) / m;
 }
 exports.foAdd = foAdd;
+/**
+ * 浮點數相減
+ * @param arg1
+ * @param arg2
+ */
 function foSubtraction(arg1, arg2) {
     var r1, r2, m, n;
     try {
@@ -411,6 +497,11 @@ function foSubtraction(arg1, arg2) {
     return ((arg1 * m - arg2 * m) / m).toFixed(n);
 }
 exports.foSubtraction = foSubtraction;
+/**
+ * 浮點數相乘
+ * @param arg1
+ * @param arg2
+ */
 function foMul(arg1, arg2) {
     var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
     try {
@@ -424,6 +515,11 @@ function foMul(arg1, arg2) {
     return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
 }
 exports.foMul = foMul;
+/**
+ * 浮點數相除
+ * @param arg1
+ * @param arg2
+ */
 function foDiv(arg1, arg2) {
     var t1 = 0, t2 = 0, r1, r2;
     try {
@@ -434,26 +530,47 @@ function foDiv(arg1, arg2) {
         t2 = arg2.toString().split(".")[1].length;
     }
     catch (e) { }
+    //with (Math) {
     r1 = Number(arg1.toString().replace(".", ""));
     r2 = Number(arg2.toString().replace(".", ""));
     return (r1 / r2) * Math.pow(10, t2 - t1);
+    //}
 }
 exports.foDiv = foDiv;
+/**
+ * 取得選單目前選取項目
+ * @param data 選單資料
+ */
 function getMenuName(data) {
-    let m1 = data.filter(x => x.use == true);
-    let m2 = m1 && m1.length > 0 ? m1[0].sub.filter(x => x.use == true) : null;
-    let m1_name = m1 && m1.length > 0 ? m1[0].menu_name : null;
-    let m2_name = m2 && m2.length > 0 ? m2[0].menu_name : "";
+    var m1 = data.filter(function (x) { return x.use == true; });
+    var m2 = m1 && m1.length > 0 ? m1[0].sub.filter(function (x) { return x.use == true; }) : null;
+    var m1_name = m1 && m1.length > 0 ? m1[0].menu_name : null;
+    var m2_name = m2 && m2.length > 0 ? m2[0].menu_name : "";
     return { m1: m1_name, m2: m2_name };
 }
 exports.getMenuName = getMenuName;
-function pickLang(zhTW, vnVN, thTH = null, idID = null, msMS = null) {
+/**
+ * 依語係傳出不同字串
+ * @param zhTW  中文
+ * @param vnVN  越南
+ * @param thTH  泰國
+ * @param idID  印尼
+ * @param msMS  馬來西亞
+ */
+function pickLang(zhTW, vnVN, thTH, idID, msMS) {
+    if (thTH === void 0) { thTH = null; }
+    if (idID === void 0) { idID = null; }
+    if (msMS === void 0) { msMS = null; }
     return '';
 }
 exports.pickLang = pickLang;
+/**
+ * 取得系統前端參數值
+ * @param key 要取得的參數key
+ */
 function pv(key) {
     var r = null;
-    paramjs.forEach((item, i) => {
+    paramjs.forEach(function (item, i) {
         if (item.key == key) {
             r = item.value;
         }
@@ -461,34 +578,47 @@ function pv(key) {
     return r;
 }
 exports.pv = pv;
+/**
+ * 依據value取得Select資料內的label直
+ * @param val 要取得的參數value
+ * @param data 要取得的參數selectlist
+ */
 function getOptionName(val, data) {
-    let res = data.filter((x) => { return x.value == val; });
-    let name = "";
+    var res = data.filter(function (x) { return x.value == val; });
+    var name = "";
     if (res.length > 0) {
         name = res[0].label;
     }
     return name;
 }
 exports.getOptionName = getOptionName;
+/**
+ * 顯示台斤格式
+ * @param qty 台斤值
+ */
 function fnTg(qty) {
-    let n = 0, f = '0', fn = 0, res = '0';
+    var n = 0, f = '0', fn = 0, res = '0';
     if (qty != 0) {
-        let digits = qty.toString().split('.');
+        var digits = qty.toString().split('.');
         n = parseInt(digits[0]);
         f = digits.length > 1 ? digits[1] : '0';
         fn = f == '1' ? 10 : parseInt(f);
-        res = (n != 0 ? `${n}斤` : '') + (f != '0' ? `${fn}兩` : '');
+        res = (n != 0 ? n + "\u65A4" : '') + (f != '0' ? fn + "\u5169" : '');
     }
     return res;
 }
 exports.fnTg = fnTg;
 ;
-exports.OpenWinFunc = (demand_sn) => {
-    let param = [];
+/**
+ * 出貨單openwin
+ * @param demand_sn
+ */
+exports.OpenWinFunc = function (demand_sn) {
+    var param = [];
     param.push('demand_sn=' + demand_sn);
-    let params = param.join('&');
-    let url = gb_approot + 'Active/Func/PackingList?' + params;
-    let open_p = 'width=960';
+    var params = param.join('&');
+    var url = gb_approot + 'Active/Func/PackingList?' + params;
+    var open_p = 'width=960';
     { }
     open_p += ', height=600';
     { }
@@ -496,6 +626,6 @@ exports.OpenWinFunc = (demand_sn) => {
     open_p += ', fullscreen=no';
     open_p += ', resizable=yes';
     open_p += ', toolbar=no,menubar=no,location=no,status=no';
-    let win = window.open(url, 'PackingList', open_p);
+    var win = window.open(url, 'PackingList', open_p);
     win.focus();
 };

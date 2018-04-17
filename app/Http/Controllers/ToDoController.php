@@ -11,4 +11,9 @@ class ToDoController extends Controller
         
         return view('todo');
     }
+
+    public function say(){
+
+        return 'Hello!';
+    }
 }
