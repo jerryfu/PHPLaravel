@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 
 Route::group(['middleware' => [], 'prefix' => '_SysAdm', 'namespace' => 'Www'], function () {
-    Route::get('', 'LoginController@index');
+    Route::get('/', 'LoginController@index')->name('set.login');
     Route::post('loginCheck', 'LoginController@login_check');
 });
 
@@ -27,3 +27,8 @@ Route::group(['prefix' => 'todo'], function () {
     Route::get('say', 'ToDoController@say')->name('todo.say');
 });
 
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+//Route::get('/', 'HomeController@index')->name('home');
