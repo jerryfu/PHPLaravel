@@ -22,7 +22,7 @@ function ReSetVcImg() {
 
 $(document).ready(function () {
 
-    $("#frm").submit(function (event) {
+    $("#frmx").submit(function (event) {
         event.preventDefault();
         var data: LoginData = {
             "account": $("#account").val(),

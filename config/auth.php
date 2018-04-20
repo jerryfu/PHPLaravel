@@ -38,12 +38,16 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'admin',
         ],
 
         'api' => [
             'driver' => 'token',
-            'provider' => 'users',
+            'provider' => 'admin',
+        ],
+        'mbr' => [
+            'driver' => 'session',
+            'provider' => 'member',
         ],
     ],
 
@@ -66,8 +70,12 @@ return [
 
     'providers' => [
 
-        'users'=>[
+        'admin' => [
             'driver' => 'sky_user',
+        ],
+
+        'member' => [
+            'driver' => 'sky_mbr',
         ]
 
 //        'users' => [

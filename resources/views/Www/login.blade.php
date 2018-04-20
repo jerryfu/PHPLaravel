@@ -7,15 +7,16 @@
         </h1>
         <h6 class="sub-copyright">TAOYUAN SUPER BASKETBALL ALLIANCE &copy; 2017</h6>
 
-        <form id="frm" class="text-left" autocomplete="off" method="post">
+        <form id="frm" class="text-left" autocomplete="off" method="post" action="/_SysAdm/loginCheck">
+            {{ csrf_field() }}
             <header class="title font-sp">System Login</header>
 
             <main class="clearfix">
                 <label>帳號 Username</label>
-                <input id="account" type="text" class="mb-12" placeholder="請輸入帳號" required>
+                <input id="account" name="account" type="text" class="mb-12" placeholder="請輸入帳號" required>
 
                 <label>密碼 Password</label>
-                <input id="password" type="password" class="mb-12" placeholder="請輸入密碼" required>
+                <input id="password" name="password" type="password" class="mb-12" placeholder="請輸入密碼" required>
 
                 <label>驗證碼 Code</label>
                 <br>

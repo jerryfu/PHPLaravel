@@ -13,7 +13,7 @@ use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
 use Illuminate\Database\ConnectionInterface;
 
-class SkyUserLoginProvider implements UserProvider
+class SkyMberLoginProvider implements UserProvider
 {
     protected $conn = null;
 
@@ -35,13 +35,13 @@ class SkyUserLoginProvider implements UserProvider
 
     public function retrieveByToken($identifier, $token)
     {
-        echo('到此一遊B');
+        //echo('到此一遊B');
         //exit;
     }
 
     public function updateRememberToken(Authenticatable $user, $token)
     {
-        echo('到此一遊C');
+        //echo('到此一遊C');
         //exit;
     }
 
@@ -61,7 +61,7 @@ class SkyUserLoginProvider implements UserProvider
         }
 
         $account = $credentials['account'];
-        $query = $this->conn->table('LogAccount')->where('account', $account);
+        $query = $this->conn->table('Member')->where('member_name', $account);
         $user = $query->first();
 
         return $this->getGenericUser($user);
@@ -126,7 +126,7 @@ class SkyUser implements UserContract
      */
     public function getAuthIdentifierName()
     {
-        return 'account';
+        return 'member_name';
     }
 
     /**
@@ -148,7 +148,7 @@ class SkyUser implements UserContract
      */
     public function getAuthPassword()
     {
-        return $this->attributes['log_pwd'];
+        return $this->attributes['password'];
     }
 
     /**
@@ -226,5 +226,4 @@ class SkyUser implements UserContract
     {
         unset($this->attributes[$key]);
     }
-
 }

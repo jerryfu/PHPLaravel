@@ -58,7 +58,7 @@ class Handler extends ExceptionHandler
         //dd(route('set_login'));
         return $request->expectsJson()
             ? response()->json(['message' => $exception->getMessage()], 401)
-            : redirect()->guest(route('login'));
+            : redirect()->guest(route('set.login'));
     }
 
 }

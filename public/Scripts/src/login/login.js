@@ -5,7 +5,7 @@ function ReSetVcImg() {
     $("#validate_img").attr("src", gb_approot + "Ah/VC.ashx?vn=" + ValidateCode + "&t" + (new Date()).getTime());
 }
 $(document).ready(function () {
-    $("#frm").submit(function (event) {
+    $("#frmx").submit(function (event) {
         event.preventDefault();
         var data = {
             "account": $("#account").val(),
